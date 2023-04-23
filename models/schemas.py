@@ -3,8 +3,6 @@ import datetime as dt
 from typing import Optional
 from pydantic import BaseModel, Field
 
-from .utils import get_time, get_uuid
-
 __all__ = ("TradeDetails", "Trade")
 
 class TradeDetails(BaseModel):

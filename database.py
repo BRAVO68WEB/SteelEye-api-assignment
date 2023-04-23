@@ -1,5 +1,3 @@
-from models import *
-
 from pymongo import MongoClient
 from dotenv import dotenv_values
 
@@ -10,4 +8,4 @@ client = MongoClient(config["MONGO_URI"])
 
 db = client['steeleye']
 
-collection = db['trades']
+collection = db['trades2']
