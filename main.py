@@ -1,26 +1,21 @@
 from enum import Enum
+import pprint
 from fastapi import FastAPI
 import datetime as dt
-from pymongo import MongoClient
-from dotenv import dotenv_values
 
-config = dotenv_values(".env")  
-client = MongoClient(config["MONGO_URI"])
-
-db = client['steeleye']
-
-collection = db['trades']
+from models.operations import TradeRead
+from database import collection
 
 class SortOrder(str, Enum):
     asc = 'asc'
     desc = 'desc'
 
 class SortBy(str, Enum):
-    tradeId = 'tradeId'
-    assetClass = 'assetClass'
+    trade_id = 'trade_id'
+    asset_class = 'asset_class'
     counterparty = 'counterparty'
-    instrumentName = 'instrumentName'
-    tradeDateTime = 'tradeDateTime'
+    instrument_name = 'instrument_name'
+    trade_date_time = 'trade_date_time'
     trader = 'trader'
 
 class TradeType(str, Enum):
@@ -31,43 +26,41 @@ class TradeType(str, Enum):
 app = FastAPI()
 
 @app.get("/showall")
-def show(asset_class:str | None = None, end: dt.datetime | None = None, max_price:float| None = None,min_price:float| None = None,start:dt.datetime | None = None, trade_type:TradeType | None = None, page_no: int = 0, per_page: int = 10, sort_by:SortBy = "tradeId", sort_order: SortOrder = "asc"):
+def show(asset_class:str | None = None, end: dt.datetime | None = None, max_price:float| None = None,min_price:float| None = None,start:dt.datetime | None = None, trade_type:TradeType | None = None, page_no: int = 0, per_page: int = 10, sort_by:SortBy = "trade_id", sort_order: SortOrder = "asc"):
 
     query = {}
 
     if asset_class:
-        query['assetClass'] = asset_class
+        query['asset_class'] = asset_class
     
     if end:
         query["end"]["$lt"] = end
         
     if max_price: 
-        query["tradeDetails.price"]["$lt"] =  max_price
+        query["trade_details.price"]["$lt"] =  max_price
             
     if min_price:
-        query["tradeDetails.price"]["$gt"] = min_price
+        query["trade_details.price"]["$gt"] = min_price
 
     if start:
         query["start"]["$gt"] = start
 
     if trade_type: 
-        query["tradeDetails.buySellIndicator"] = trade_type
+        query["trade_details.buySellIndicator"] = trade_type
     
-    result = []
     sort_dir = 1
     if(sort_order == 'asc'):
         sort_dir = 1
     else:
         sort_dir = -1
-    for trades in collection.find(query, {'_id': 0}).limit(per_page).skip(page_no * per_page).sort(
-        key_or_list=sort_by, direction=sort_dir):
-       result.append(trades)
-
-    return result
+    cursor = collection.find(query, {'_id': 0}).limit(per_page).skip(page_no * per_page).sort(
+        key_or_list=sort_by, direction=sort_dir)
+    
+    return [TradeRead(**document) for document in cursor]
 
 @app.get("/getbyid/{id}")
 def get_by_id(id:int):
-    trade = collection.find_one({"tradeId": id}, {'_id': 0})
+    trade = collection.find_one({"trade_id": id}, {'_id': 0})
     return trade
 
 @app.post("/addtrade")
@@ -76,31 +69,31 @@ def add(instrument_id:int, instrument_name:str, trade_date_time:dt.date,buySellI
     query = {}
     
     if asset_class:
-        query['assetClass'] = asset_class
+        query['asset_class'] = asset_class
 
     if counterparty:
         query['counterparty'] = counterparty
 
     if instrument_id:
-        query['instrumentId'] = instrument_id
+        query['instrument_id'] = instrument_id
 
     if instrument_name:
-        query['instrumentName'] = instrument_name
+        query['instrument_name'] = instrument_name
 
     if trade_date_time:
-        query['tradeDateTime'] = trade_date_time
+        query['trade_date_time'] = trade_date_time
 
     if buySellIndicator:
-        query['tradeDetails.buySellIndicator'] = buySellIndicator
+        query['trade_details.buySellIndicator'] = buySellIndicator
 
     if price:
-        query['tradeDetails.price'] = price
+        query['trade_details.price'] = price
         
     if quantity:
-        query['tradeDetails.quantity'] = quantity
+        query['trade_details.quantity'] = quantity
 
     if trade_id:
-        query['tradeId'] = trade_id
+        query['trade_id'] = trade_id
 
     if trader:
         query['trader'] = trader

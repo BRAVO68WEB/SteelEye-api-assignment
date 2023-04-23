@@ -53,7 +53,7 @@ uvicorn main:app --reload
 
 > This endpoint returns a list of trades based on the query parameters. The query parameters are optional and can be used to filter, sort and paginate the results.
 
-> Query Parameters
+- Query Parameters
 
 ```asset_class: Filter by asset class.
 end: Filter by end date time.

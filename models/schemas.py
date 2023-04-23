@@ -3,13 +3,22 @@ import datetime as dt
 from typing import Optional
 from pydantic import BaseModel, Field
 
+from .utils import get_time, get_uuid
+
+__all__ = ("TradeDetails", "Trade")
 
 class TradeDetails(BaseModel):
-    buySellIndicator: str = Field(description="A value of BUY for buys, SELL for sells.")
+    buySellIndicator: str = Field(
+        description="A value of BUY for buys, SELL for sells."
+        )
 
-    price: float = Field(description="The price of the Trade.")
+    price: float = Field(
+        description="The price of the Trade."
+        )
 
-    quantity: int = Field(description="The amount of units traded.")
+    quantity: int = Field(
+        description="The amount of units traded."
+        )
 
 
 class Trade(BaseModel):
