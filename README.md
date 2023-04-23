@@ -14,7 +14,8 @@ Requirements
 1. Clone the repository:
 
 ```
-git clone https://github.com/<your-username>/<your-repo-name>.git
+git clone https://github.com/mishrarohit10/Rohit-Mishra_Back_End.git
+cd Rohit-Mishra_Back_End
 ```
 
 2. Create a virtual environment and activate it:
@@ -53,9 +54,10 @@ uvicorn main:app --reload
 
 > This endpoint returns a list of trades based on the query parameters. The query parameters are optional and can be used to filter, sort and paginate the results.
 
-> Query Parameters
+- Query Parameters
 
-```asset_class: Filter by asset class.
+```
+asset_class: Filter by asset class.
 end: Filter by end date time.
 max_price: Filter by maximum trade price.
 min_price: Filter by minimum trade price.
@@ -89,36 +91,4 @@ id: The trade ID.
 
 ```
 http://localhost:8000/getbyid/123
-```
-
-3. POST /addtrade
-
-> This endpoint adds a new trade to the database.
-
-- Request Body
-```
-instrument_id: The ID of the instrument.
-instrument_name: The name of the instrument.
-trade_date_time: The date and time of the trade.
-buySellIndicator: The type of the trade (BUY or SELL).
-price: The price of the trade.
-quantity: The quantity of the trade.
-trade_id: The ID of the trade.
-trader: The name of the trader.
-asset_class: The asset class of the trade (optional).
-counterparty: The counterparty of the trade (optional).
-```
-
-- Example
-
-> To add a new trade with the following details:
-
-```
-instrument_id: 1
-instrument_name: AAPL
-trade_date_time: 2023-04-23
-buySellIndicator: BUY
-price: 130.0
-quantity: 100
-trade_id: 12345
 ```
